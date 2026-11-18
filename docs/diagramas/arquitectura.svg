@@ -1,0 +1,294 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 770" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0d12"/>
+      <stop offset="55%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c2129"/>
+      <stop offset="100%" stop-color="#13171f"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/>
+    </marker>
+    <marker id="arrow-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrow-rose" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f43f5e"/>
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f97316"/>
+    </marker>
+
+    <!-- Rutas de los paquetes -->
+    <path id="req-a" d="M130 363 H492 V200 H600"/>
+    <path id="req-b" d="M130 363 H492 V395 H600"/>
+    <path id="req-c" d="M130 363 H492 V590 H600"/>
+    <path id="sql-a" d="M730 200 H835"/>
+    <path id="sql-b" d="M730 395 H775 V205 H835"/>
+    <path id="sql-c" d="M730 590 H775 V205 H835"/>
+    <path id="sec-a" d="M665 172 V99 H1020"/>
+    <path id="nat-out" d="M600 212 H445 M357 190 H280 V338"/>
+  </defs>
+
+  <style>
+    .mono { font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace; }
+    .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+
+    @keyframes flow { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+    @keyframes flow-slow { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
+    @keyframes pulse { 0%,100% { opacity: .9; transform: scale(1); } 50% { opacity: .25; transform: scale(1.06); } }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+    @keyframes scale-bar { 0%,15% { width: 70px; } 45%,65% { width: 210px; } 90%,100% { width: 70px; } }
+    @keyframes scale-txt-a { 0%,15% { opacity: 1; } 25%,80% { opacity: 0; } 90%,100% { opacity: 1; } }
+    @keyframes scale-txt-b { 0%,20% { opacity: 0; } 35%,70% { opacity: 1; } 80%,100% { opacity: 0; } }
+    @keyframes ghost { 0%,20% { opacity: 0; } 35%,65% { opacity: 1; } 80%,100% { opacity: 0; } }
+
+    .flow { stroke-dasharray: 6 6; animation: flow 1s linear infinite; }
+    .flow-slow { stroke-dasharray: 4 8; animation: flow-slow 2.4s linear infinite; }
+    .pulse { animation: pulse 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .blink { animation: blink 1.6s ease-in-out infinite; }
+    .float { animation: float 4s ease-in-out infinite; }
+    .bar { animation: scale-bar 9s ease-in-out infinite; }
+    .cap-a { animation: scale-txt-a 9s ease-in-out infinite; }
+    .cap-b { animation: scale-txt-b 9s ease-in-out infinite; }
+    .ghost { animation: ghost 9s ease-in-out infinite; }
+  </style>
+
+  <!-- Lienzo -->
+  <rect width="1200" height="770" rx="14" fill="url(#bg)" stroke="#30363d" stroke-width="1.5"/>
+
+  <!-- Barra de ventana -->
+  <rect width="1200" height="42" rx="14" fill="#161b22"/>
+  <rect y="30" width="1200" height="12" fill="#161b22"/>
+  <line x1="0" y1="42" x2="1200" y2="42" stroke="#30363d"/>
+  <circle cx="24" cy="21" r="5.5" fill="#ef4444"/>
+  <circle cx="42" cy="21" r="5.5" fill="#eab308"/>
+  <circle cx="60" cy="21" r="5.5" fill="#22c55e"/>
+  <text x="600" y="26" text-anchor="middle" fill="#8b949e" class="mono" font-size="12" font-weight="600">xyz-university — arquitectura en aws · us-east-1</text>
+  <rect x="1062" y="12" width="122" height="18" rx="4" fill="#238636" opacity=".2"/>
+  <text x="1123" y="25" text-anchor="middle" fill="#3fb950" class="mono" font-size="10" font-weight="700"><tspan class="blink">●</tspan> HA · 3 AZ</text>
+  <rect x="0" y="42" width="1200" height="2" fill="url(#brand)"/>
+
+  <!-- ============ Región ============ -->
+  <rect x="150" y="62" width="1035" height="642" rx="12" fill="none" stroke="#f97316" stroke-opacity=".55" stroke-dasharray="7 6"/>
+  <rect x="166" y="54" width="126" height="18" rx="4" fill="#0d1117"/>
+  <text x="174" y="67" fill="#fb923c" class="mono" font-size="11" font-weight="700">AWS · us-east-1</text>
+
+  <!-- ============ VPC ============ -->
+  <rect x="310" y="80" width="680" height="612" rx="10" fill="#0d1117" fill-opacity=".55" stroke="#8b949e" stroke-opacity=".5" stroke-dasharray="5 5"/>
+  <text x="324" y="95" fill="#8b949e" class="mono" font-size="10" font-weight="700">VPC · 10.x.0.0/16</text>
+
+  <!-- Bandas de AZ -->
+  <g class="mono" font-size="10" fill="#6e7681">
+    <rect x="325" y="104" width="652" height="182" rx="8" fill="#ffffff" fill-opacity=".015" stroke="#30363d"/>
+    <text x="935" y="118" text-anchor="end">us-east-1a</text>
+    <rect x="325" y="298" width="652" height="182" rx="8" fill="#ffffff" fill-opacity=".015" stroke="#30363d"/>
+    <text x="935" y="312" text-anchor="end">us-east-1b</text>
+    <rect x="325" y="492" width="652" height="182" rx="8" fill="#ffffff" fill-opacity=".015" stroke="#30363d"/>
+    <text x="935" y="506" text-anchor="end">us-east-1c</text>
+  </g>
+
+  <!-- Subnets -->
+  <g class="mono" font-size="10" font-weight="700">
+    <!-- públicas -->
+    <rect x="345" y="124" width="200" height="150" rx="7" fill="#38bdf8" fill-opacity=".06" stroke="#38bdf8" stroke-opacity=".45"/>
+    <text x="355" y="139" fill="#7dd3fc">public 1</text>
+    <rect x="345" y="318" width="200" height="150" rx="7" fill="#38bdf8" fill-opacity=".06" stroke="#38bdf8" stroke-opacity=".45"/>
+    <text x="355" y="333" fill="#7dd3fc">public 2</text>
+    <rect x="345" y="512" width="200" height="150" rx="7" fill="#38bdf8" fill-opacity=".06" stroke="#38bdf8" stroke-opacity=".45"/>
+    <text x="355" y="527" fill="#7dd3fc">public 3</text>
+    <!-- app -->
+    <rect x="565" y="124" width="200" height="150" rx="7" fill="#22c55e" fill-opacity=".05" stroke="#22c55e" stroke-opacity=".4"/>
+    <text x="575" y="139" fill="#86efac">private 1 · app</text>
+    <rect x="565" y="318" width="200" height="150" rx="7" fill="#22c55e" fill-opacity=".05" stroke="#22c55e" stroke-opacity=".4"/>
+    <text x="575" y="333" fill="#86efac">private 2 · app</text>
+    <rect x="565" y="512" width="200" height="150" rx="7" fill="#22c55e" fill-opacity=".05" stroke="#22c55e" stroke-opacity=".4"/>
+    <text x="575" y="527" fill="#86efac">private 3 · app</text>
+    <!-- datos -->
+    <rect x="785" y="124" width="190" height="150" rx="7" fill="#a78bfa" fill-opacity=".06" stroke="#a78bfa" stroke-opacity=".45"/>
+    <text x="795" y="139" fill="#c4b5fd">private 4 · datos</text>
+    <rect x="785" y="318" width="190" height="150" rx="7" fill="#a78bfa" fill-opacity=".04" stroke="#a78bfa" stroke-opacity=".3"/>
+    <text x="795" y="333" fill="#c4b5fd">private 5 · datos</text>
+    <rect x="785" y="512" width="190" height="150" rx="7" fill="#a78bfa" fill-opacity=".04" stroke="#a78bfa" stroke-opacity=".3"/>
+    <text x="795" y="527" fill="#c4b5fd">private 6 · datos</text>
+  </g>
+  <g class="mono" font-size="10" fill="#6e7681" text-anchor="middle">
+    <text x="880" y="390">DB subnet group</text>
+    <text x="880" y="405">sin ruta a internet</text>
+    <text x="880" y="584">DB subnet group</text>
+    <text x="880" y="599">sin ruta a internet</text>
+  </g>
+
+  <!-- ============ Conexiones estáticas (debajo de los nodos) ============ -->
+  <!-- Salida por NAT (apt / npm) -->
+  <path d="M600 212 H445" fill="none" stroke="#f97316" stroke-width="1.4" stroke-opacity=".8" class="flow-slow" marker-end="url(#arrow-orange)"/>
+  <path d="M357 190 H280 V336" fill="none" stroke="#f97316" stroke-width="1.4" stroke-opacity=".8" class="flow-slow" marker-end="url(#arrow-orange)"/>
+  <text x="290" y="182" fill="#fb923c" class="mono" font-size="9">apt / npm</text>
+
+  <!-- Tráfico de entrada -->
+  <path d="M130 363 H218" fill="none" stroke="#38bdf8" stroke-width="2" class="flow" marker-end="url(#arrow-blue)"/>
+  <path d="M340 363 H453" fill="none" stroke="#38bdf8" stroke-width="2" class="flow" marker-end="url(#arrow-blue)"/>
+  <text x="150" y="354" fill="#7dd3fc" class="mono" font-size="9">HTTP :80</text>
+
+  <!-- ALB → EC2 -->
+  <path d="M530 200 H598" fill="none" stroke="#22c55e" stroke-width="2" class="flow" marker-end="url(#arrow-green)"/>
+  <path d="M530 395 H598" fill="none" stroke="#22c55e" stroke-width="2" class="flow" marker-end="url(#arrow-green)"/>
+  <path d="M530 590 H598" fill="none" stroke="#22c55e" stroke-width="2" class="flow" marker-end="url(#arrow-green)"/>
+
+  <!-- EC2 → RDS -->
+  <path d="M730 200 H833" fill="none" stroke="#a78bfa" stroke-width="1.8" class="flow" marker-end="url(#arrow-violet)"/>
+  <path d="M730 395 H775 V208" fill="none" stroke="#a78bfa" stroke-width="1.8" class="flow"/>
+  <path d="M730 590 H775 V395" fill="none" stroke="#a78bfa" stroke-width="1.8" class="flow"/>
+  <text x="788" y="192" fill="#c4b5fd" class="mono" font-size="9">3306</text>
+
+  <!-- EC2 → Secrets Manager -->
+  <path d="M665 170 V99 H1018" fill="none" stroke="#f43f5e" stroke-width="1.6" class="flow" marker-end="url(#arrow-rose)"/>
+  <text x="850" y="94" fill="#fda4af" class="mono" font-size="9">GetSecretValue</text>
+
+  <!-- LabInstanceProfile → ASG -->
+  <path d="M1095 618 V683 H665 V656" fill="none" stroke="#f43f5e" stroke-width="1.3" stroke-opacity=".75" class="flow-slow" marker-end="url(#arrow-rose)"/>
+  <text x="1000" y="678" fill="#fda4af" class="mono" font-size="9">perfil IAM</text>
+
+  <!-- ============ Nodos ============ -->
+  <!-- Usuario -->
+  <g class="float">
+    <rect x="20" y="335" width="110" height="56" rx="9" fill="url(#card)" stroke="#8b949e" stroke-width="1.3"/>
+    <circle cx="44" cy="356" r="6" fill="none" stroke="#c9d1d9" stroke-width="1.5"/>
+    <path d="M34 373 Q44 361 54 373" fill="none" stroke="#c9d1d9" stroke-width="1.5"/>
+    <text x="62" y="360" fill="#e6edf3" class="sans" font-size="12" font-weight="700">Usuario</text>
+    <text x="62" y="376" fill="#8b949e" class="mono" font-size="9">navegador</text>
+  </g>
+
+  <!-- Internet Gateway -->
+  <rect x="220" y="338" width="120" height="50" rx="9" fill="url(#card)" stroke="#f97316" stroke-width="1.4"/>
+  <text x="280" y="359" text-anchor="middle" fill="#e6edf3" class="sans" font-size="11.5" font-weight="700">Internet Gateway</text>
+  <text x="280" y="375" text-anchor="middle" fill="#fb923c" class="mono" font-size="9">entrada pública</text>
+
+  <!-- NAT Gateway -->
+  <rect x="357" y="165" width="88" height="50" rx="8" fill="url(#card)" stroke="#f97316" stroke-width="1.4"/>
+  <text x="401" y="186" text-anchor="middle" fill="#e6edf3" class="sans" font-size="11" font-weight="700">NAT</text>
+  <text x="401" y="202" text-anchor="middle" fill="#fb923c" class="mono" font-size="9">Gateway</text>
+
+  <!-- ALB (abarca las 3 AZ) -->
+  <rect x="449" y="136" width="87" height="518" rx="12" fill="none" stroke="#38bdf8" stroke-opacity=".5" class="pulse"/>
+  <rect x="455" y="142" width="75" height="506" rx="10" fill="url(#card)" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="492" y="160" text-anchor="middle" fill="#fda4af" class="mono" font-size="9" font-weight="700">alb-sg</text>
+  <g class="sans" font-size="11.5" font-weight="700" fill="#e6edf3" text-anchor="middle">
+    <text x="492" y="440">Application</text>
+    <text x="492" y="456">Load</text>
+    <text x="492" y="472">Balancer</text>
+  </g>
+  <text x="492" y="492" text-anchor="middle" fill="#7dd3fc" class="mono" font-size="9">:80</text>
+
+  <!-- ASG -->
+  <rect x="585" y="150" width="160" height="494" rx="10" fill="none" stroke="#22c55e" stroke-opacity=".7" stroke-dasharray="6 5"/>
+  <rect x="595" y="636" width="140" height="16" rx="4" fill="#0d1117"/>
+  <text x="665" y="648" text-anchor="middle" fill="#86efac" class="mono" font-size="9" font-weight="700">Auto Scaling · app-sg</text>
+
+  <!-- EC2 x3 -->
+  <g>
+    <rect x="600" y="172" width="130" height="56" rx="9" fill="url(#card)" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="614" y="196" fill="#e6edf3" class="sans" font-size="12" font-weight="700">EC2 · App Server</text>
+    <text x="614" y="213" fill="#86efac" class="mono" font-size="9">t3.micro · Ubuntu</text>
+    <circle cx="719" cy="183" r="4" fill="#22c55e" class="blink" filter="url(#glow)"/>
+  </g>
+  <g>
+    <rect x="600" y="367" width="130" height="56" rx="9" fill="url(#card)" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="614" y="391" fill="#e6edf3" class="sans" font-size="12" font-weight="700">EC2 · App Server</text>
+    <text x="614" y="408" fill="#86efac" class="mono" font-size="9">t3.micro · Ubuntu</text>
+    <circle cx="719" cy="378" r="4" fill="#22c55e" class="blink" filter="url(#glow)" style="animation-delay:.5s"/>
+  </g>
+  <g>
+    <rect x="600" y="562" width="130" height="56" rx="9" fill="url(#card)" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="614" y="586" fill="#e6edf3" class="sans" font-size="12" font-weight="700">EC2 · App Server</text>
+    <text x="614" y="603" fill="#86efac" class="mono" font-size="9">t3.micro · Ubuntu</text>
+    <circle cx="719" cy="573" r="4" fill="#22c55e" class="blink" filter="url(#glow)" style="animation-delay:1s"/>
+  </g>
+  <!-- Instancias que aparecen al escalar -->
+  <g class="ghost">
+    <rect x="600" y="240" width="130" height="26" rx="7" fill="#22c55e" fill-opacity=".08" stroke="#22c55e" stroke-dasharray="4 3"/>
+    <text x="665" y="257" text-anchor="middle" fill="#86efac" class="mono" font-size="9">+ EC2 (escalando)</text>
+    <rect x="600" y="435" width="130" height="26" rx="7" fill="#22c55e" fill-opacity=".08" stroke="#22c55e" stroke-dasharray="4 3"/>
+    <text x="665" y="452" text-anchor="middle" fill="#86efac" class="mono" font-size="9">+ EC2 (escalando)</text>
+    <rect x="600" y="531" width="130" height="24" rx="7" fill="#22c55e" fill-opacity=".08" stroke="#22c55e" stroke-dasharray="4 3"/>
+    <text x="665" y="547" text-anchor="middle" fill="#86efac" class="mono" font-size="9">+ EC2 (escalando)</text>
+  </g>
+
+  <!-- RDS -->
+  <rect x="815" y="150" width="140" height="112" rx="9" fill="none" stroke="#f43f5e" stroke-opacity=".7" stroke-dasharray="5 4"/>
+  <text x="823" y="164" fill="#fda4af" class="mono" font-size="9" font-weight="700">db-sg</text>
+  <ellipse cx="880" cy="213" rx="52" ry="40" fill="#a78bfa" fill-opacity=".12" class="pulse"/>
+  <path d="M837 183 V233 A43 10 0 0 0 923 233 V183" fill="url(#card)" stroke="#a78bfa" stroke-width="1.6"/>
+  <ellipse cx="880" cy="183" rx="43" ry="10" fill="#1c2129" stroke="#a78bfa" stroke-width="1.6"/>
+  <text x="880" y="212" text-anchor="middle" fill="#e6edf3" class="sans" font-size="12" font-weight="700">RDS MySQL</text>
+  <text x="880" y="228" text-anchor="middle" fill="#c4b5fd" class="mono" font-size="9">Single-AZ</text>
+  <text x="880" y="256" text-anchor="middle" fill="#8b949e" class="mono" font-size="8.5">publicly_accessible = false</text>
+
+  <!-- Secrets Manager -->
+  <rect x="1020" y="88" width="150" height="56" rx="9" fill="url(#card)" stroke="#f43f5e" stroke-width="1.5"/>
+  <rect x="1034" y="104" width="14" height="11" rx="2" fill="none" stroke="#fda4af" stroke-width="1.4"/>
+  <path d="M1037 104 V100 A4 4 0 0 1 1045 100 V104" fill="none" stroke="#fda4af" stroke-width="1.4"/>
+  <text x="1056" y="113" fill="#e6edf3" class="sans" font-size="12" font-weight="700">Secrets Manager</text>
+  <text x="1034" y="132" fill="#fda4af" class="mono" font-size="9">credenciales de la BD</text>
+
+  <!-- LabInstanceProfile -->
+  <rect x="1020" y="562" width="150" height="56" rx="9" fill="url(#card)" stroke="#f43f5e" stroke-width="1.5"/>
+  <text x="1034" y="586" fill="#e6edf3" class="sans" font-size="12" font-weight="700">LabInstanceProfile</text>
+  <text x="1034" y="603" fill="#fda4af" class="mono" font-size="9">LabRole · solo lectura</text>
+
+  <!-- Notas laterales -->
+  <g class="mono" font-size="9.5" fill="#8b949e">
+    <text x="1020" y="300" fill="#c9d1d9" font-weight="700">Cadena de SGs</text>
+    <text x="1020" y="320"><tspan fill="#7dd3fc">internet</tspan> → alb-sg  :80</text>
+    <text x="1020" y="338"><tspan fill="#7dd3fc">alb-sg</tspan>   → app-sg  :app</text>
+    <text x="1020" y="356"><tspan fill="#86efac">app-sg</tspan>   → db-sg   :3306</text>
+    <text x="1020" y="374"><tspan fill="#86efac">app-sg</tspan>   → secrets :443</text>
+    <text x="1020" y="408" fill="#c9d1d9" font-weight="700">Sin credenciales</text>
+    <text x="1020" y="426">en el código ni en</text>
+    <text x="1020" y="444">el user_data</text>
+  </g>
+
+  <!-- ============ Paquetes animados ============ -->
+  <g filter="url(#glow)">
+    <circle r="4.5" fill="#38bdf8"><animateMotion dur="3s" repeatCount="indefinite" begin="0s"><mpath href="#req-a"/></animateMotion></circle>
+    <circle r="4.5" fill="#38bdf8"><animateMotion dur="3s" repeatCount="indefinite" begin="1s"><mpath href="#req-b"/></animateMotion></circle>
+    <circle r="4.5" fill="#38bdf8"><animateMotion dur="3s" repeatCount="indefinite" begin="2s"><mpath href="#req-c"/></animateMotion></circle>
+    <circle r="3.5" fill="#a78bfa"><animateMotion dur="3s" repeatCount="indefinite" begin="0.4s" keyPoints="0;1;1" keyTimes="0;0.35;1" calcMode="linear"><mpath href="#sql-a"/></animateMotion></circle>
+    <circle r="3.5" fill="#a78bfa"><animateMotion dur="3s" repeatCount="indefinite" begin="1.4s" keyPoints="0;1;1" keyTimes="0;0.5;1" calcMode="linear"><mpath href="#sql-b"/></animateMotion></circle>
+    <circle r="3.5" fill="#a78bfa"><animateMotion dur="3s" repeatCount="indefinite" begin="2.4s" keyPoints="0;1;1" keyTimes="0;0.6;1" calcMode="linear"><mpath href="#sql-c"/></animateMotion></circle>
+    <circle r="3.5" fill="#f43f5e"><animateMotion dur="4.5s" repeatCount="indefinite" begin="0.8s" keyPoints="0;1;1" keyTimes="0;0.55;1" calcMode="linear"><mpath href="#sec-a"/></animateMotion></circle>
+  </g>
+
+  <!-- ============ Pie: leyenda + capacidad del ASG ============ -->
+  <line x1="20" y1="716" x2="1180" y2="716" stroke="#30363d"/>
+  <g class="mono" font-size="10" fill="#c9d1d9">
+    <circle cx="34" cy="740" r="4.5" fill="#38bdf8"/><text x="45" y="744">petición HTTP</text>
+    <circle cx="160" cy="740" r="4.5" fill="#a78bfa"/><text x="171" y="744">SQL :3306</text>
+    <circle cx="262" cy="740" r="4.5" fill="#f43f5e"/><text x="273" y="744">secreto / IAM</text>
+    <circle cx="384" cy="740" r="4.5" fill="#f97316"/><text x="395" y="744">salida por NAT</text>
+    <rect x="505" y="734" width="12" height="12" rx="2" fill="none" stroke="#f43f5e" stroke-dasharray="3 2"/><text x="524" y="744">security group</text>
+  </g>
+  <g class="mono" font-size="10">
+    <text x="760" y="744" fill="#8b949e">ASG</text>
+    <rect x="790" y="733" width="210" height="14" rx="7" fill="#161b22" stroke="#30363d"/>
+    <rect x="790" y="733" width="70" height="14" rx="7" fill="#22c55e" fill-opacity=".75" class="bar"/>
+    <text x="1012" y="744" fill="#86efac" class="cap-a">2 instancias · CPU normal</text>
+    <text x="1012" y="744" fill="#fbbf24" class="cap-b">6 instancias · pico de carga</text>
+  </g>
+</svg>

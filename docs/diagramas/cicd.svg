@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0d12"/>
+      <stop offset="55%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#f43f5e"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c2129"/>
+      <stop offset="100%" stop-color="#13171f"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="a-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8b949e"/></marker>
+    <marker id="a-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/></marker>
+    <marker id="a-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker>
+    <marker id="a-rose" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f43f5e"/></marker>
+
+    <path id="to-dev"  d="M150 230 H885 V128 H1170"/>
+    <path id="to-prod" d="M150 230 H885 V343 H1170"/>
+    <path id="fail"    d="M574 258 V318 H245 V260"/>
+  </defs>
+
+  <style>
+    .mono { font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace; }
+    .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+
+    @keyframes flow { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+    @keyframes pulse { 0%,100% { opacity: .85; transform: scale(1); } 50% { opacity: .2; transform: scale(1.08); } }
+    /* Cada check se enciende en orden dentro de un ciclo de 6s */
+    @keyframes lit { 0%,100% { stroke-opacity: .25; fill-opacity: 0; } 8%,30% { stroke-opacity: 1; fill-opacity: .14; } }
+    @keyframes tick { 0%,6% { opacity: 0; } 12%,90% { opacity: 1; } 100% { opacity: 0; } }
+
+    .flow { stroke-dasharray: 6 6; animation: flow 1s linear infinite; }
+    .blink { animation: blink 1.4s ease-in-out infinite; }
+    .pulse { animation: pulse 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .lit { animation: lit 6s ease-in-out infinite both; fill-opacity: 0; stroke-opacity: .25; }
+    .tick { animation: tick 6s ease-in-out infinite both; opacity: 0; }
+  </style>
+
+  <!-- Lienzo -->
+  <rect width="1200" height="500" rx="14" fill="url(#bg)" stroke="#30363d" stroke-width="1.5"/>
+  <rect width="1200" height="42" rx="14" fill="#161b22"/>
+  <rect y="30" width="1200" height="12" fill="#161b22"/>
+  <line x1="0" y1="42" x2="1200" y2="42" stroke="#30363d"/>
+  <circle cx="24" cy="21" r="5.5" fill="#ef4444"/>
+  <circle cx="42" cy="21" r="5.5" fill="#eab308"/>
+  <circle cx="60" cy="21" r="5.5" fill="#22c55e"/>
+  <text x="600" y="26" text-anchor="middle" fill="#8b949e" class="mono" font-size="12" font-weight="600">xyz-university — github actions · ci.yml → cd.yml</text>
+  <rect x="1046" y="12" width="138" height="18" rx="4" fill="#238636" opacity=".2"/>
+  <text x="1115" y="25" text-anchor="middle" fill="#3fb950" class="mono" font-size="10" font-weight="700"><tspan class="blink">●</tspan> PIPELINE ACTIVO</text>
+  <rect x="0" y="42" width="1200" height="2" fill="url(#brand)"/>
+
+  <!-- ============ Conexiones ============ -->
+  <path d="M150 230 H183" fill="none" stroke="#8b949e" stroke-width="1.8" class="flow" marker-end="url(#a-gray)"/>
+  <path d="M305 230 H348" fill="none" stroke="#38bdf8" stroke-width="1.8" class="flow" marker-end="url(#a-blue)"/>
+  <path d="M430 230 H440" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
+  <path d="M520 230 H530" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
+  <path d="M610 230 H620" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
+  <path d="M700 230 H743" fill="none" stroke="#22c55e" stroke-width="2" class="flow" marker-end="url(#a-green)"/>
+  <text x="712" y="221" fill="#86efac" class="mono" font-size="9">verde</text>
+
+  <path d="M865 230 H885 V118 H918" fill="none" stroke="#8b949e" stroke-width="1.8" class="flow" marker-end="url(#a-gray)"/>
+  <text x="893" y="170" fill="#8b949e" class="mono" font-size="9">merge</text>
+  <text x="893" y="182" fill="#8b949e" class="mono" font-size="9">a dev</text>
+  <path d="M865 230 H885 V333 H918" fill="none" stroke="#22c55e" stroke-width="2" class="flow" marker-end="url(#a-green)"/>
+  <text x="893" y="254" fill="#86efac" class="mono" font-size="9">merge</text>
+  <text x="893" y="266" fill="#86efac" class="mono" font-size="9">a main</text>
+  <path d="M1030 118 H1043" fill="none" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#a-blue)"/>
+  <path d="M1030 333 H1043" fill="none" stroke="#f43f5e" stroke-width="1.8" class="flow" marker-end="url(#a-rose)"/>
+
+  <!-- Falla → corregir -->
+  <path d="M574 258 V318 H245 V262" fill="none" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#a-rose)"/>
+  <rect x="352" y="309" width="128" height="18" rx="4" fill="#0d1117"/>
+  <text x="416" y="322" text-anchor="middle" fill="#fda4af" class="mono" font-size="9.5" font-weight="700">✕ falla → corregir</text>
+
+  <!-- ============ Nodos ============ -->
+  <!-- Rama -->
+  <rect x="30" y="202" width="120" height="56" rx="9" fill="url(#card)" stroke="#8b949e" stroke-width="1.3"/>
+  <circle cx="48" cy="222" r="4" fill="none" stroke="#c9d1d9" stroke-width="1.4"/>
+  <circle cx="48" cy="240" r="4" fill="none" stroke="#c9d1d9" stroke-width="1.4"/>
+  <path d="M48 226 V236" stroke="#c9d1d9" stroke-width="1.4"/>
+  <text x="60" y="226" fill="#e6edf3" class="sans" font-size="12" font-weight="700">feat/*</text>
+  <text x="60" y="243" fill="#8b949e" class="mono" font-size="9">un tema</text>
+
+  <!-- Pull Request -->
+  <rect x="185" y="202" width="120" height="56" rx="9" fill="url(#card)" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="245" y="226" text-anchor="middle" fill="#e6edf3" class="sans" font-size="12" font-weight="700">Pull Request</text>
+  <text x="245" y="243" text-anchor="middle" fill="#7dd3fc" class="mono" font-size="9">→ dev o main</text>
+
+  <!-- ci.yml -->
+  <rect x="335" y="160" width="380" height="122" rx="11" fill="#38bdf8" fill-opacity=".04" stroke="#38bdf8" stroke-opacity=".55" stroke-dasharray="6 5"/>
+  <rect x="347" y="152" width="140" height="17" rx="4" fill="#0d1117"/>
+  <text x="355" y="164" fill="#7dd3fc" class="mono" font-size="10" font-weight="700">ci.yml · en cada PR</text>
+
+  <g class="sans" font-size="11" font-weight="700" fill="#e6edf3" text-anchor="middle">
+    <rect x="350" y="202" width="80" height="56" rx="8" fill="url(#card)" stroke="#30363d"/>
+    <rect x="350" y="202" width="80" height="56" rx="8" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.6" class="lit" style="animation-delay:0s"/>
+    <text x="390" y="226">fmt</text>
+    <text x="390" y="242" class="mono" font-size="8.5" font-weight="400" fill="#8b949e">validate</text>
+
+    <rect x="440" y="202" width="80" height="56" rx="8" fill="url(#card)" stroke="#30363d"/>
+    <rect x="440" y="202" width="80" height="56" rx="8" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.6" class="lit" style="animation-delay:.6s"/>
+    <text x="480" y="226">tflint</text>
+    <text x="480" y="242" class="mono" font-size="8.5" font-weight="400" fill="#8b949e">linter</text>
+
+    <rect x="530" y="202" width="80" height="56" rx="8" fill="url(#card)" stroke="#30363d"/>
+    <rect x="530" y="202" width="80" height="56" rx="8" fill="#f43f5e" stroke="#f43f5e" stroke-width="1.6" class="lit" style="animation-delay:1.2s"/>
+    <text x="570" y="226">checkov</text>
+    <text x="570" y="242" class="mono" font-size="8.5" font-weight="400" fill="#8b949e">seguridad IaC</text>
+
+    <rect x="620" y="202" width="80" height="56" rx="8" fill="url(#card)" stroke="#30363d"/>
+    <rect x="620" y="202" width="80" height="56" rx="8" fill="#22c55e" stroke="#22c55e" stroke-width="1.6" class="lit" style="animation-delay:1.8s"/>
+    <text x="660" y="226">plan</text>
+    <text x="660" y="242" class="mono" font-size="8.5" font-weight="400" fill="#8b949e">comenta el PR</text>
+  </g>
+  <!-- palomitas -->
+  <g class="mono" font-size="11" font-weight="700" fill="#3fb950">
+    <text x="420" y="214" class="tick" style="animation-delay:0s">✓</text>
+    <text x="510" y="214" class="tick" style="animation-delay:.6s">✓</text>
+    <text x="600" y="214" class="tick" style="animation-delay:1.2s">✓</text>
+    <text x="690" y="214" class="tick" style="animation-delay:1.8s">✓</text>
+  </g>
+  <text x="525" y="274" text-anchor="middle" fill="#6e7681" class="mono" font-size="9">si alguno falla, el merge queda bloqueado</text>
+
+  <!-- Review + merge -->
+  <rect x="745" y="202" width="120" height="56" rx="9" fill="url(#card)" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="805" y="226" text-anchor="middle" fill="#e6edf3" class="sans" font-size="12" font-weight="700">Review + merge</text>
+  <text x="805" y="243" text-anchor="middle" fill="#7dd3fc" class="mono" font-size="9">CODEOWNERS</text>
+
+  <!-- environment dev -->
+  <rect x="905" y="72" width="275" height="96" rx="11" fill="#38bdf8" fill-opacity=".04" stroke="#38bdf8" stroke-opacity=".55" stroke-dasharray="6 5"/>
+  <rect x="917" y="64" width="120" height="17" rx="4" fill="#0d1117"/>
+  <text x="925" y="76" fill="#7dd3fc" class="mono" font-size="10" font-weight="700">environment dev</text>
+  <rect x="920" y="90" width="110" height="56" rx="9" fill="url(#card)" stroke="#f97316" stroke-width="1.5"/>
+  <text x="975" y="114" text-anchor="middle" fill="#e6edf3" class="sans" font-size="12" font-weight="700">apply dev</text>
+  <text x="975" y="131" text-anchor="middle" fill="#fb923c" class="mono" font-size="9">dev.tfvars</text>
+  <rect x="1045" y="90" width="120" height="56" rx="9" fill="url(#card)" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="1105" y="114" text-anchor="middle" fill="#e6edf3" class="sans" font-size="12" font-weight="700">smoke test</text>
+  <text x="1105" y="131" text-anchor="middle" fill="#86efac" class="mono" font-size="9">HTTP 200 en el ALB</text>
+
+  <!-- environment prod -->
+  <rect x="905" y="287" width="275" height="96" rx="11" fill="#f43f5e" fill-opacity=".04" stroke="#f43f5e" stroke-opacity=".6" stroke-dasharray="6 5"/>
+  <rect x="917" y="279" width="128" height="17" rx="4" fill="#0d1117"/>
+  <text x="925" y="291" fill="#fda4af" class="mono" font-size="10" font-weight="700">environment prod</text>
+  <rect x="914" y="299" width="122" height="68" rx="12" fill="none" stroke="#f43f5e" class="pulse"/>
+  <rect x="920" y="305" width="110" height="56" rx="9" fill="url(#card)" stroke="#f43f5e" stroke-width="1.5"/>
+  <rect x="934" y="318" width="11" height="9" rx="2" fill="none" stroke="#fda4af" stroke-width="1.3"/>
+  <path d="M936.5 318 V315 A3 3 0 0 1 942.5 315 V318" fill="none" stroke="#fda4af" stroke-width="1.3"/>
+  <text x="984" y="327" text-anchor="middle" fill="#e6edf3" class="sans" font-size="12" font-weight="700">Aprobación</text>
+  <text x="975" y="347" text-anchor="middle" fill="#fda4af" class="mono blink" font-size="9">esperando…</text>
+  <rect x="1045" y="305" width="120" height="56" rx="9" fill="url(#card)" stroke="#f97316" stroke-width="1.5"/>
+  <text x="1105" y="329" text-anchor="middle" fill="#e6edf3" class="sans" font-size="12" font-weight="700">apply prod</text>
+  <text x="1105" y="346" text-anchor="middle" fill="#fb923c" class="mono" font-size="9">+ smoke test</text>
+
+  <!-- ============ Paquetes ============ -->
+  <g filter="url(#glow)">
+    <circle r="5" fill="#38bdf8">
+      <animateMotion dur="6s" repeatCount="indefinite" begin="0s" keyPoints="0;0.15;0.62;0.62;1;1" keyTimes="0;0.08;0.4;0.45;0.7;1" calcMode="linear"><mpath href="#to-dev"/></animateMotion>
+    </circle>
+    <circle r="5" fill="#22c55e">
+      <animateMotion dur="6s" repeatCount="indefinite" begin="3s" keyPoints="0;0.15;0.6;0.6;0.73;0.73;1;1" keyTimes="0;0.08;0.4;0.45;0.55;0.75;0.9;1" calcMode="linear"><mpath href="#to-prod"/></animateMotion>
+    </circle>
+  </g>
+
+  <!-- ============ Pie ============ -->
+  <line x1="20" y1="408" x2="1180" y2="408" stroke="#30363d"/>
+  <g class="mono" font-size="10">
+    <rect x="30" y="424" width="360" height="56" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="44" y="445" fill="#7dd3fc" font-weight="700">ci.yml</text>
+    <text x="44" y="464" fill="#8b949e">PR → fmt · validate · tflint · checkov · plan</text>
+
+    <rect x="420" y="424" width="360" height="56" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="434" y="445" fill="#86efac" font-weight="700">cd.yml</text>
+    <text x="434" y="464" fill="#8b949e">push dev → apply dev · push main → apply prod</text>
+
+    <rect x="810" y="424" width="360" height="56" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="824" y="445" fill="#fda4af" font-weight="700">destroy.yml</text>
+    <text x="824" y="464" fill="#8b949e">manual · apaga un ambiente y cuida el presupuesto</text>
+  </g>
+</svg>

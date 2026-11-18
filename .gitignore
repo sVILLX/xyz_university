@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+*.local.tfvars
+
+# Credenciales y llaves
+.env
+*.pem
+*.key
+
+# Diagramas interactivos generados (se regeneran desde los .json con archify)
+docs/diagramas/*.html
+
+# Claude Code (configuración personal)
+.claude/settings.local.json

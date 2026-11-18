@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "XYZ University · Flujo CI/CD",
+    "output": "docs/diagramas/cicd.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "feat",
+      "type": "frontend",
+      "label": "Rama feat/*",
+      "sublabel": "un tema por rama",
+      "pos": [
+        30,
+        220
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "pr",
+      "type": "frontend",
+      "label": "Pull Request",
+      "sublabel": "hacia dev o main",
+      "pos": [
+        210,
+        220
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "lint",
+      "type": "security",
+      "label": "Lint + escaneo",
+      "sublabel": "fmt · tflint · checkov",
+      "pos": [
+        380,
+        220
+      ],
+      "size": [
+        150,
+        60
+      ],
+      "tag": "bloqueante"
+    },
+    {
+      "id": "plan",
+      "type": "backend",
+      "label": "terraform plan",
+      "sublabel": "comentario en el PR",
+      "pos": [
+        570,
+        220
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "merge",
+      "type": "frontend",
+      "label": "Review + merge",
+      "sublabel": "CODEOWNERS",
+      "pos": [
+        780,
+        220
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "apply_dev",
+      "type": "cloud",
+      "label": "apply dev",
+      "sublabel": "+ smoke test",
+      "pos": [
+        970,
+        90
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "approve",
+      "type": "security",
+      "label": "Aprobación",
+      "sublabel": "required reviewers",
+      "pos": [
+        970,
+        350
+      ],
+      "size": [
+        140,
+        60
+      ],
+      "tag": "gate humano"
+    },
+    {
+      "id": "apply_prod",
+      "type": "cloud",
+      "label": "apply prod",
+      "sublabel": "+ smoke test",
+      "pos": [
+        1150,
+        350
+      ],
+      "size": [
+        140,
+        60
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "ci.yml · en cada PR",
+      "wraps": [
+        "lint",
+        "plan"
+      ],
+      "pad": 22
+    },
+    {
+      "kind": "security-group",
+      "label": "environment dev",
+      "wraps": [
+        "apply_dev"
+      ],
+      "pad": 14
+    },
+    {
+      "kind": "security-group",
+      "label": "environment prod",
+      "wraps": [
+        "approve",
+        "apply_prod"
+      ],
+      "pad": 14
+    }
+  ],
+  "connections": [
+    {
+      "from": "feat",
+      "to": "pr"
+    },
+    {
+      "from": "pr",
+      "to": "lint",
+      "variant": "emphasis"
+    },
+    {
+      "from": "lint",
+      "to": "plan",
+      "variant": "emphasis"
+    },
+    {
+      "from": "plan",
+      "to": "merge",
+      "label": "verde",
+      "variant": "emphasis"
+    },
+    {
+      "from": "merge",
+      "to": "apply_dev",
+      "label": "merge a dev"
+    },
+    {
+      "from": "merge",
+      "to": "approve",
+      "label": "merge a main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "approve",
+      "to": "apply_prod",
+      "variant": "security"
+    },
+    {
+      "from": "lint",
+      "to": "pr",
+      "label": "falla → corregir",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "bottom"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Camino feliz",
+      "items": [
+        "Todo cambio entra por PR, también a dev",
+        "El plan se revisa antes de aprobar",
+        "Merge a dev despliega dev; merge a main despliega prod"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Compuertas",
+      "items": [
+        "CI en rojo bloquea el merge",
+        "prod exige aprobación manual del environment",
+        "concurrency evita dos applies al mismo tiempo"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Credenciales",
+      "items": [
+        "Secrets por environment: dev y prod",
+        "Credenciales temporales de AWS Academy",
+        "destroy.yml manual para cuidar el presupuesto"
+      ]
+    }
+  ]
+}
