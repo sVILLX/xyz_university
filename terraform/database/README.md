@@ -64,7 +64,7 @@ flowchart LR
 |---|---|
 | `aws_db_subnet_group` | private 4–6 |
 | `aws_db_instance` | MySQL, `db.t3.micro`, **Single-AZ**, `publicly_accessible = false`, `db-sg`, **sin enhanced monitoring**, almacenamiento cifrado |
-| `random_password` | Contraseña generada por Terraform (si se elige la opción A, ver abajo) |
+| `random_password` | Contraseña de la base generada por Terraform |
 | `aws_secretsmanager_secret` | Contenedor del secreto con el nombre que espera la app |
 | `aws_secretsmanager_secret_version` | El JSON con host, usuario, contraseña y nombre de la base |
 
@@ -72,7 +72,9 @@ flowchart LR
 
 ## 🔐 El secreto
 
-La aplicación lee el secreto **tal cual lo crea Script-1** del curso, así que el **nombre** y el **formato JSON** deben coincidir exactamente. Revisa `scripts/cloud9-scripts.yml` antes de implementar.
+Terraform crea el secreto **completo** en el mismo `apply` que levanta la base: genera la contraseña con `random_password`, toma el endpoint de RDS y guarda todo como JSON. Ningún paso manual, nada que correr a mano por ambiente.
+
+La aplicación lee ese secreto al arrancar, así que el **nombre** y las **llaves del JSON** deben coincidir con lo que espera su código. Confírmalo con quien lleva `compute` antes de implementar.
 
 ```json
 {
@@ -83,22 +85,16 @@ La aplicación lee el secreto **tal cual lo crea Script-1** del curso, así que 
 }
 ```
 
-<sub>Ejemplo ilustrativo: las llaves reales salen de Script-1.</sub>
+<sub>Ejemplo ilustrativo: las llaves reales las define el código de la aplicación.</sub>
 
-### ¿Quién crea el secreto?
-
-| | Opción A · Terraform | Opción B · Script-1 |
-|---|---|---|
-| **Cómo** | `random_password` + `aws_secretsmanager_secret_version` con el endpoint de RDS | Se corre Script-1 con la AWS CLI; Terraform solo lo lee con `data` |
-| ✅ Ventaja | Todo reproducible desde el pipeline, sin pasos manuales | La contraseña no pasa por el estado de Terraform |
-| ⚠️ Desventaja | La contraseña queda en el `tfstate`: el bucket **debe** estar cifrado y privado | Un paso manual por ambiente; hay que coordinarlo con el primer apply |
-| **Recomendación** | ⭐ Preferida para dev/prod efímeros | Útil si se quiere replicar el laboratorio al pie de la letra |
+> [!IMPORTANT]
+> La contraseña generada queda guardada en el `tfstate`. Por eso el bucket del estado **debe** estar cifrado, versionado y sin acceso público (lo garantiza `bootstrap/`).
 
 ---
 
 ## 🚚 Migración de datos (Fase 3)
 
-Los registros que existen en la base local de la EC2 POC se pasan a RDS con **Script-3** del curso:
+Los registros que existen en la base local de la EC2 POC se pasan a RDS con un `mysqldump` hecho desde la propia POC:
 
 ```mermaid
 sequenceDiagram
@@ -130,9 +126,9 @@ sequenceDiagram
 | `data_subnet_ids` | `list(string)` | networking |
 | `db_sg_id` | `string` | security |
 | `db_instance_class` | `string` | `*.tfvars` |
-| `db_name` | `string` | Raíz (debe coincidir con Script-1) |
+| `db_name` | `string` | Raíz (debe coincidir con lo que lee la app) |
 | `db_username` | `string` | Raíz |
-| `secret_name` | `string` | Raíz (debe coincidir con Script-1) |
+| `secret_name` | `string` | Raíz (debe coincidir con lo que lee la app) |
 | `db_backup_retention_days` | `number` | `*.tfvars` |
 | `db_deletion_protection` | `bool` | `*.tfvars` |
 | `db_skip_final_snapshot` | `bool` | `*.tfvars` |

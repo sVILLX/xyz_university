@@ -135,7 +135,6 @@ xyz_university/
 │   └── prod.s3.tfbackend           # Ubicación del estado de prod
 │
 ├── scripts/
-│   ├── cloud9-scripts.yml          # Scripts del curso: secreto, carga y migración
 │   └── smoke-test.sh               # Verifica HTTP 200 en el ALB tras cada apply
 │
 ├── docs/
