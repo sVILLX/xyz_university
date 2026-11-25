@@ -64,3 +64,31 @@ variable "instance_profile_name" {
   description = "Nombre del instance profile existente (security). En AWS Academy: LabInstanceProfile."
   type        = string
 }
+
+# =============================================================================
+# EC2 POC (Fase 2)
+# =============================================================================
+
+variable "enable_poc" {
+  description = "Crea la EC2 única de la Fase 2 (app + MySQL local) en public 1. Desactivar al terminar la migración."
+  type        = bool
+  default     = false
+}
+
+variable "poc_sg_id" {
+  description = "poc-sg (security). Obligatorio cuando enable_poc = true."
+  type        = string
+  default     = null
+}
+
+variable "poc_instance_type" {
+  description = "Tipo de instancia de la POC."
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "poc_key_name" {
+  description = "Key pair para entrar por SSH a la POC (migración con mysqldump). En AWS Academy: vockey. null = sin llave."
+  type        = string
+  default     = "vockey"
+}
