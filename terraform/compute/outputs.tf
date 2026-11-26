@@ -35,3 +35,22 @@ output "ami_id" {
   description = "AMI de Ubuntu usada por las instancias."
   value       = local.ami_id
 }
+
+# =============================================================================
+# Application Load Balancer
+# =============================================================================
+
+output "alb_dns_name" {
+  description = "DNS del ALB. Lo consumen los outputs raíz, smoke-test.sh y la prueba de carga."
+  value       = aws_lb.app.dns_name
+}
+
+output "alb_url" {
+  description = "URL de la aplicación."
+  value       = "http://${aws_lb.app.dns_name}"
+}
+
+output "target_group_arn" {
+  description = "ARN del Target Group (diagnóstico: aws elbv2 describe-target-health)."
+  value       = aws_lb_target_group.app.arn
+}

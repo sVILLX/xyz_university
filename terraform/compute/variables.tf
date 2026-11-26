@@ -129,3 +129,28 @@ variable "instance_type" {
   type        = string
   default     = "t3.micro"
 }
+
+# =============================================================================
+# Application Load Balancer
+# =============================================================================
+
+variable "vpc_id" {
+  description = "VPC (networking). La necesita el Target Group (y el SG del generador de carga)."
+  type        = string
+}
+
+variable "alb_sg_id" {
+  description = "alb-sg (security). Acepta 80/TCP desde internet."
+  type        = string
+}
+
+variable "health_check_path" {
+  description = "Ruta del health check. \"/\" solo renderiza HTML y no toca la BD; /students abre una conexión nueva por petición."
+  type        = string
+  default     = "/"
+
+  validation {
+    condition     = startswith(var.health_check_path, "/")
+    error_message = "health_check_path debe empezar con \"/\"."
+  }
+}
