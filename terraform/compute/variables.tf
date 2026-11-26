@@ -92,3 +92,40 @@ variable "poc_key_name" {
   type        = string
   default     = "vockey"
 }
+
+# =============================================================================
+# App Server (Launch Template)
+# =============================================================================
+
+variable "region" {
+  description = "Región de AWS. El código de la app tiene us-east-1 fijo en app/config/config.js, así que no puede ser otra."
+  type        = string
+  default     = "us-east-1"
+
+  validation {
+    condition     = var.region == "us-east-1"
+    error_message = "La app lee Secrets Manager en us-east-1 (valor fijo en config.js); region debe ser \"us-east-1\"."
+  }
+}
+
+variable "app_sg_id" {
+  description = "app-sg (security). Solo acepta app_port desde alb-sg."
+  type        = string
+}
+
+variable "secret_name" {
+  description = "Nombre del secreto con las credenciales de RDS (database). La app tiene \"Mydbsecret\" fijo en config.js."
+  type        = string
+  default     = "Mydbsecret"
+
+  validation {
+    condition     = var.secret_name == "Mydbsecret"
+    error_message = "La app solo lee el secreto \"Mydbsecret\" (valor fijo en app/config/config.js)."
+  }
+}
+
+variable "instance_type" {
+  description = "Tipo de instancia del App Server."
+  type        = string
+  default     = "t3.micro"
+}

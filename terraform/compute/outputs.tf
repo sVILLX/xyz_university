@@ -16,3 +16,22 @@ output "poc_instance_id" {
   description = "ID de la instancia POC. null si enable_poc = false."
   value       = one(aws_instance.poc[*].id)
 }
+
+# =============================================================================
+# App Server
+# =============================================================================
+
+output "launch_template_id" {
+  description = "ID del Launch Template del App Server."
+  value       = aws_launch_template.app.id
+}
+
+output "launch_template_latest_version" {
+  description = "Última versión del Launch Template (la que usa el ASG)."
+  value       = aws_launch_template.app.latest_version
+}
+
+output "ami_id" {
+  description = "AMI de Ubuntu usada por las instancias."
+  value       = local.ami_id
+}
