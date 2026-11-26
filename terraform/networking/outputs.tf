@@ -41,3 +41,8 @@ output "nat_public_ip" {
   description = "IP pública con la que salen a internet las instancias de la capa app."
   value       = aws_eip.nat.public_ip
 }
+
+output "secrets_endpoint_id" {
+  description = "ID del VPC Endpoint de Secrets Manager. null si enable_secrets_endpoint = false."
+  value       = one(aws_vpc_endpoint.secretsmanager[*].id)
+}

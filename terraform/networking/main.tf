@@ -215,3 +215,32 @@ resource "aws_route_table_association" "data" {
   subnet_id      = each.value.id
   route_table_id = aws_route_table.data.id
 }
+
+# =============================================================================
+# VPC Endpoint de Secrets Manager (solo con enable_secrets_endpoint)
+# Una interfaz por AZ en la capa app. Con DNS privado, el nombre público
+# secretsmanager.<región>.amazonaws.com resuelve a estas IPs privadas y la app
+# no cambia nada: el tráfico deja de pasar por el NAT.
+# =============================================================================
+
+resource "aws_vpc_endpoint" "secretsmanager" {
+  count = var.enable_secrets_endpoint ? 1 : 0
+
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${local.region}.secretsmanager"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [for az in var.azs : aws_subnet.app[az].id]
+  security_group_ids  = [var.endpoint_sg_id]
+  private_dns_enabled = true
+
+  tags = {
+    Name = "${local.name_prefix}-secretsmanager-vpce"
+  }
+
+  lifecycle {
+    precondition {
+      condition     = var.endpoint_sg_id != null
+      error_message = "enable_secrets_endpoint = true requiere endpoint_sg_id (módulo security). Sin él AWS usaría el SG por defecto, que no tiene reglas."
+    }
+  }
+}

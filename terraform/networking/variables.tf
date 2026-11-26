@@ -88,3 +88,19 @@ variable "data_subnet_cidrs" {
     error_message = "Los CIDRs de las subnets no pueden repetirse entre capas."
   }
 }
+
+# =============================================================================
+# VPC Endpoint de Secrets Manager
+# =============================================================================
+
+variable "enable_secrets_endpoint" {
+  description = "Crea el Interface Endpoint de Secrets Manager en private 1–3. dev: false (el secreto se lee por el NAT) · prod: true."
+  type        = bool
+  default     = false
+}
+
+variable "endpoint_sg_id" {
+  description = "endpoint-sg (security). Obligatorio cuando enable_secrets_endpoint = true; debe aceptar 443 desde app-sg."
+  type        = string
+  default     = null
+}
