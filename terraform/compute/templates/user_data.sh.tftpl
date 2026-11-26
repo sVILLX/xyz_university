@@ -1,0 +1,88 @@
+#!/bin/bash
+# =============================================================================
+# App Server (Fases 3–4): app Node.js que lee las credenciales de RDS desde
+# Secrets Manager con el rol de LabInstanceProfile.
+# Basado en el UserdataScript-phase-3 de AWS Academy, con estos cambios:
+#   - La app corre como servicio systemd (usuario sin privilegios) en vez de rc.local.
+#   - Antes de arrancar la app se espera a que el secreto sea legible. Si no,
+#     config.js caería en sus valores por defecto (MySQL en localhost) y la
+#     instancia parecería sana pero sin base de datos.
+# Este script NUNCA recibe usuarios ni contraseñas.
+# Log: /var/log/cloud-init-output.log · journalctl -u xyz-app
+# =============================================================================
+set -euxo pipefail
+export DEBIAN_FRONTEND=noninteractive
+export HOME=/root
+
+APP_DIR="${app_dir}"
+APP_PORT="${app_port}"
+
+# --- Paquetes (salida a internet por el NAT Gateway) -------------------------
+for i in $(seq 1 10); do
+  apt-get update -y && break
+  sleep 15
+done
+apt-get install -y nodejs npm unzip wget mysql-client
+
+# --- Código de la aplicación -------------------------------------------------
+mkdir -p /opt/xyz-app
+wget --tries=10 --retry-connrefused --waitretry=10 -q -O /opt/xyz-app/code.zip "${app_code_url}"
+unzip -q -o /opt/xyz-app/code.zip -d /opt/xyz-app -x "resources/codebase_partner/node_modules/*"
+cd "$APP_DIR"
+npm install --no-audit --no-fund aws-sdk@2
+
+# --- Espera del secreto --------------------------------------------------------
+# Sale con 0 cuando el secreto existe y tiene las llaves que lee config.js.
+cat > /opt/xyz-app/wait-for-secret.js <<'JS'
+const AWS = require("aws-sdk");
+const client = new AWS.SecretsManager({ region: process.env.SECRET_REGION });
+const deadline = Date.now() + 60 * 1000;
+(function attempt() {
+  client.getSecretValue({ SecretId: process.env.SECRET_NAME }, (err, data) => {
+    if (!err) {
+      const s = JSON.parse(data.SecretString || "{}");
+      const missing = ["user", "password", "host", "db"].filter((k) => !s[k]);
+      if (missing.length === 0) { console.log("Secret OK"); process.exit(0); }
+      err = new Error("Faltan llaves en el secreto: " + missing.join(","));
+    }
+    console.error("Esperando el secreto: " + err.message);
+    if (Date.now() > deadline) process.exit(1);
+    setTimeout(attempt, 5000);
+  });
+})();
+JS
+
+# --- Servicio systemd ----------------------------------------------------------
+id nodeapp >/dev/null 2>&1 || useradd --system --no-create-home --shell /usr/sbin/nologin nodeapp
+
+cat > /etc/systemd/system/xyz-app.service <<UNIT
+[Unit]
+Description=XYZ University student records app
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+User=nodeapp
+WorkingDirectory=$APP_DIR
+Environment=APP_PORT=$APP_PORT
+Environment=NODE_PATH=$APP_DIR/node_modules
+Environment=SECRET_NAME=${secret_name}
+Environment=SECRET_REGION=${region}
+ExecStartPre=/usr/bin/node /opt/xyz-app/wait-for-secret.js
+ExecStart=/usr/bin/node index.js
+Restart=always
+RestartSec=10
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+systemctl daemon-reload
+systemctl enable xyz-app.service
+# --no-block: si el secreto aún no existe, cloud-init termina y systemd sigue reintentando.
+systemctl start --no-block xyz-app.service
