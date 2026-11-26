@@ -30,3 +30,9 @@ mock_resource "aws_eip" {
     public_ip = "203.0.113.10"
   }
 }
+
+mock_resource "aws_vpc_endpoint" {
+  defaults = {
+    id = "vpce-0123456789abcdef0"
+  }
+}
