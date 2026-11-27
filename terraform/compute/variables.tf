@@ -135,7 +135,7 @@ variable "instance_type" {
 # =============================================================================
 
 variable "vpc_id" {
-  description = "VPC (networking). La necesita el Target Group (y el SG del generador de carga)."
+  description = "VPC (networking). La necesita el Target Group."
   type        = string
 }
 
@@ -217,4 +217,48 @@ variable "health_check_grace_period" {
   description = "Segundos que el ASG espera antes de considerar el health check del ELB en una instancia nueva."
   type        = number
   default     = 300
+}
+
+# =============================================================================
+# Generador de carga (Fase 4, reemplaza a Cloud9 para Script-2)
+# =============================================================================
+
+variable "enable_load_tester" {
+  description = "Crea una EC2 temporal en public 1 que corre loadtest contra el ALB al arrancar. Desactivar al terminar la prueba."
+  type        = bool
+  default     = false
+}
+
+variable "load_tester_sg_id" {
+  description = "load-tester-sg (security). Obligatorio cuando enable_load_tester = true."
+  type        = string
+  default     = null
+}
+
+variable "load_tester_instance_type" {
+  description = "Tipo de instancia del generador de carga."
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "load_tester_key_name" {
+  description = "Key pair para entrar por SSH y repetir la prueba (el 22 lo abre security con load_tester_ssh_cidrs). En AWS Academy: vockey. null = sin llave."
+  type        = string
+  default     = "vockey"
+}
+
+variable "load_test" {
+  description = "Parámetros de loadtest (Script-2: --rps 1000 -c 500 -k). duration_seconds limita la prueba; path \"/\" evita saturar RDS."
+  type = object({
+    rps              = optional(number, 1000)
+    concurrency      = optional(number, 500)
+    duration_seconds = optional(number, 600)
+    path             = optional(string, "/")
+  })
+  default = {}
+
+  validation {
+    condition     = var.load_test.duration_seconds > 0 && var.load_test.duration_seconds <= 3600
+    error_message = "load_test.duration_seconds debe estar entre 1 y 3600."
+  }
 }
