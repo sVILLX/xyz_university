@@ -54,3 +54,12 @@ output "target_group_arn" {
   description = "ARN del Target Group (diagnóstico: aws elbv2 describe-target-health)."
   value       = aws_lb_target_group.app.arn
 }
+
+# =============================================================================
+# Auto Scaling Group
+# =============================================================================
+
+output "asg_name" {
+  description = "Nombre del Auto Scaling Group (evidencias de escalado)."
+  value       = aws_autoscaling_group.app.name
+}
