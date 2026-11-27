@@ -63,3 +63,17 @@ output "asg_name" {
   description = "Nombre del Auto Scaling Group (evidencias de escalado)."
   value       = aws_autoscaling_group.app.name
 }
+
+# =============================================================================
+# Generador de carga
+# =============================================================================
+
+output "load_tester_instance_id" {
+  description = "ID del generador de carga (EC2 > Get system log para ver resultados). null si enable_load_tester = false."
+  value       = one(aws_instance.load_tester[*].id)
+}
+
+output "load_tester_public_ip" {
+  description = "IP pública del generador de carga (SSH opcional). null si enable_load_tester = false."
+  value       = one(aws_instance.load_tester[*].public_ip)
+}

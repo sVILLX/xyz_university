@@ -1,0 +1,51 @@
+#!/bin/bash
+# =============================================================================
+# Generador de carga (Fase 4, Task 4). Reemplaza a Cloud9 para correr Script-2:
+#   loadtest --rps <rps> -c <concurrency> -k <ALB>
+# Corre una vez al arrancar, cuando el ALB ya responde 200, y se detiene a los
+# duration_seconds. Para repetir:  sudo systemctl start xyz-loadtest
+# Resultados: /var/log/xyz-loadtest.log (también en EC2 > Get system log)
+# =============================================================================
+set -euxo pipefail
+export DEBIAN_FRONTEND=noninteractive
+export HOME=/root
+
+for i in $(seq 1 10); do
+  apt-get update -y && break
+  sleep 15
+done
+apt-get install -y nodejs npm curl
+# loadtest 6+ exige Node >= 16; Ubuntu 22.04 trae Node 12 → se fija la rama 5.x.
+npm install -g --no-audit --no-fund loadtest@5.2.0
+
+cat > /usr/local/bin/xyz-loadtest.sh <<'SH'
+#!/bin/bash
+set -uo pipefail
+TARGET="${target_url}"
+echo "[$(date -Is)] Esperando a que $TARGET responda 200..."
+until [ "$(curl -s -o /dev/null -w '%%{http_code}' "$TARGET")" = "200" ]; do sleep 10; done
+echo "[$(date -Is)] Iniciando loadtest: rps=${rps} c=${concurrency} t=${duration_seconds}s"
+loadtest --rps ${rps} -c ${concurrency} -k -t ${duration_seconds} "$TARGET"
+echo "[$(date -Is)] Prueba terminada"
+SH
+chmod +x /usr/local/bin/xyz-loadtest.sh
+
+cat > /etc/systemd/system/xyz-loadtest.service <<'UNIT'
+[Unit]
+Description=Prueba de carga contra el ALB de XYZ University
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c '/usr/local/bin/xyz-loadtest.sh 2>&1 | tee -a /var/log/xyz-loadtest.log /dev/console'
+TimeoutStartSec=0
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+systemctl daemon-reload
+# Solo corre en el primer arranque; después se dispara a mano.
+systemctl start --no-block xyz-loadtest.service
