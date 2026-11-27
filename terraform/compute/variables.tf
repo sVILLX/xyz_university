@@ -154,3 +154,67 @@ variable "health_check_path" {
     error_message = "health_check_path debe empezar con \"/\"."
   }
 }
+
+# =============================================================================
+# Auto Scaling Group
+# =============================================================================
+
+variable "app_subnet_ids" {
+  description = "Subnets privadas private 1–3 (networking) donde viven las instancias del ASG."
+  type        = list(string)
+
+  validation {
+    condition     = length(var.app_subnet_ids) >= 2
+    error_message = "El ASG necesita al menos 2 subnets privadas en AZ distintas."
+  }
+}
+
+variable "asg_min" {
+  description = "Número mínimo de instancias."
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.asg_min >= 1
+    error_message = "asg_min debe ser al menos 1."
+  }
+}
+
+variable "asg_desired" {
+  description = "Instancias deseadas al crear el ASG. Después la controla la política de escalado (Terraform la ignora)."
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.asg_desired >= var.asg_min && var.asg_desired <= var.asg_max
+    error_message = "Se debe cumplir asg_min <= asg_desired <= asg_max."
+  }
+}
+
+variable "asg_max" {
+  description = "Número máximo de instancias."
+  type        = number
+  default     = 2
+
+  validation {
+    condition     = var.asg_max >= var.asg_min
+    error_message = "asg_max debe ser mayor o igual que asg_min."
+  }
+}
+
+variable "cpu_target" {
+  description = "CPU promedio (%) que la política target tracking intenta mantener."
+  type        = number
+  default     = 70
+
+  validation {
+    condition     = var.cpu_target >= 10 && var.cpu_target <= 90
+    error_message = "cpu_target debe estar entre 10 y 90."
+  }
+}
+
+variable "health_check_grace_period" {
+  description = "Segundos que el ASG espera antes de considerar el health check del ELB en una instancia nueva."
+  type        = number
+  default     = 300
+}
