@@ -54,3 +54,14 @@ variable "db_skip_final_snapshot" {
   type        = bool
   default     = true
 }
+
+variable "secret_name" {
+  description = "Nombre del secreto. La app solo lee Mydbsecret (fijo en su código)."
+  type        = string
+  default     = "Mydbsecret"
+
+  validation {
+    condition     = var.secret_name == "Mydbsecret"
+    error_message = "La app solo lee el secreto \"Mydbsecret\"."
+  }
+}
