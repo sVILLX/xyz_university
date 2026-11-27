@@ -1,6 +1,11 @@
 variable "environment" {
   description = "Ambiente (dev o prod). Prefijo de nombres: xyz-<environment>-<recurso>."
   type        = string
+
+  validation {
+    condition     = contains(["dev", "prod"], var.environment)
+    error_message = "environment debe ser \"dev\" o \"prod\"."
+  }
 }
 
 variable "data_subnet_ids" {
