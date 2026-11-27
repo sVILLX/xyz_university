@@ -10,3 +10,8 @@ resource "aws_db_subnet_group" "main" {
     Name = "${local.name_prefix}-db-subnet-group"
   }
 }
+
+resource "random_password" "db" {
+  length  = 20
+  special = false
+}
