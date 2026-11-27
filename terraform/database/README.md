@@ -4,9 +4,9 @@
 
 **La capa de datos: RDS MySQL en subnets privadas sin acceso a internet, con credenciales guardadas en Secrets Manager.**
 
-![Responsable](https://img.shields.io/badge/responsable-por%20asignar-7C3AED)
+![Responsable](https://img.shields.io/badge/responsable-Omar%20Ponce-7C3AED)
 ![Capa](https://img.shields.io/badge/capa-datos-7C3AED)
-![Estado](https://img.shields.io/badge/estado-por%20implementar-yellow)
+![Estado](https://img.shields.io/badge/estado-c%C3%B3digo%20listo-blue)
 
 [⬅ Volver al README principal](../../README.md)
 
@@ -63,9 +63,9 @@ flowchart LR
 | Recurso | Detalle |
 |---|---|
 | `aws_db_subnet_group` | private 4–6 |
-| `aws_db_instance` | MySQL, `db.t3.micro`, **Single-AZ**, `publicly_accessible = false`, `db-sg`, **sin enhanced monitoring**, almacenamiento cifrado |
-| `random_password` | Contraseña de la base generada por Terraform |
-| `aws_secretsmanager_secret` | Contenedor del secreto con el nombre que espera la app |
+| `aws_db_instance` | MySQL **8.4**, `db.t3.micro`, **Single-AZ**, `publicly_accessible = false`, `db-sg`, **sin enhanced monitoring**, almacenamiento cifrado |
+| `random_password` | Contraseña de la base generada por Terraform: 20 caracteres, sin símbolos (RDS rechaza algunos) |
+| `aws_secretsmanager_secret` | Contenedor del secreto `Mydbsecret` (nombre fijo en la app), con `recovery_window_in_days = 0` para poder recrear dev sin choques de nombre |
 | `aws_secretsmanager_secret_version` | El JSON con host, usuario, contraseña y nombre de la base |
 
 ---
@@ -74,7 +74,7 @@ flowchart LR
 
 Terraform crea el secreto **completo** en el mismo `apply` que levanta la base: genera la contraseña con `random_password`, toma el endpoint de RDS y guarda todo como JSON. Ningún paso manual, nada que correr a mano por ambiente.
 
-La aplicación lee ese secreto al arrancar, así que el **nombre** y las **llaves del JSON** deben coincidir con lo que espera su código. Confírmalo con quien lleva `compute` antes de implementar.
+La aplicación lee ese secreto al arrancar, así que el **nombre** y las **llaves del JSON** deben coincidir con lo que espera su código: el nombre es `Mydbsecret` y las llaves son `user`, `password`, `host` y `db`, las mismas que revisa el `user_data` de `compute` antes de arrancar la app.
 
 ```json
 {
@@ -85,7 +85,7 @@ La aplicación lee ese secreto al arrancar, así que el **nombre** y las **llave
 }
 ```
 
-<sub>Ejemplo ilustrativo: las llaves reales las define el código de la aplicación.</sub>
+<sub>Ejemplo ilustrativo: los valores reales los genera Terraform en cada ambiente.</sub>
 
 > [!IMPORTANT]
 > La contraseña generada queda guardada en el `tfstate`. Por eso el bucket del estado **debe** estar cifrado, versionado y sin acceso público (lo garantiza `bootstrap/`).
@@ -128,6 +128,7 @@ sequenceDiagram
 | `db_instance_class` | `string` | `*.tfvars` |
 | `db_name` | `string` | Raíz (debe coincidir con lo que lee la app) |
 | `db_username` | `string` | Raíz |
+| `db_availability_zone` | `string` | Raíz (`us-east-1a` = private 4) |
 | `secret_name` | `string` | Raíz (debe coincidir con lo que lee la app) |
 | `db_backup_retention_days` | `number` | `*.tfvars` |
 | `db_deletion_protection` | `bool` | `*.tfvars` |
@@ -162,9 +163,9 @@ sequenceDiagram
 ## ✅ Criterios de aceptación
 
 - [ ] RDS MySQL corre en `private 4` con `publicly_accessible = false`.
-- [ ] Enhanced monitoring **desactivado**.
+- [x] Enhanced monitoring **desactivado**.
 - [ ] Solo `app-sg` (y temporalmente `poc-sg`) puede conectarse al 3306.
-- [ ] El secreto tiene **el mismo nombre y formato** que espera la aplicación.
+- [x] El secreto tiene **el mismo nombre y formato** que espera la aplicación.
 - [ ] La app servida desde el ALB muestra los registros migrados desde la POC.
 - [ ] El CRUD completo funciona contra RDS.
 
@@ -188,3 +189,29 @@ aws secretsmanager get-secret-value --secret-id <secret_name> --query SecretStri
 | 🛡 `security` | `db_sg_id` y cuándo se quita la regla temporal de la POC |
 | 🖥 `compute` | El `secret_name` exacto y que la POC siga viva hasta terminar la migración |
 | 🌐 `networking` | `data_subnet_ids` en al menos 2 AZ |
+
+---
+
+## 🧪 Pruebas
+
+Se prueban con `terraform test` y un *mock provider*: no se conecta a AWS ni gasta crédito del lab.
+
+```bash
+cd terraform/database
+terraform init -backend=false
+terraform test
+```
+
+| Prueba | Qué revisa |
+|---|---|
+| `subnet_group_con_las_subnets_de_datos` | El DB Subnet Group usa las 3 subnets de datos |
+| `rds_privada_single_az` | MySQL privada, Single-AZ en `us-east-1a`, con `db-sg`, cifrada y sin enhanced monitoring |
+| `dev_se_puede_destruir` | En dev no hay protección contra borrado ni snapshot final |
+| `prod_protege_la_base` | En prod hay protección, 7 días de respaldo y snapshot final |
+| `secreto_con_las_llaves_de_la_app` | `Mydbsecret` trae `user`, `password`, `host` y `db`, y los outputs los exponen |
+| `rechaza_otro_nombre_de_secreto` | La validación bloquea cualquier nombre distinto de `Mydbsecret` |
+| `rechaza_ambiente_invalido` | `environment` solo acepta `dev` o `prod` |
+
+> [!NOTE]
+> Se usa **MySQL 8.4**: RDS para MySQL 8.0 salió de soporte estándar el 31 de julio de 2026 y desde entonces cobra *Extended Support*.
+ 
