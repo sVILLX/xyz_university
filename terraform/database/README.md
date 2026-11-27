@@ -200,7 +200,13 @@ Se prueban con `terraform test` y un *mock provider*: no se conecta a AWS ni gas
 cd terraform/database
 terraform init -backend=false
 terraform test
+
+# Lint y escaneo de seguridad (los mismos que corre el CI)
+tflint --init && tflint
+docker run --rm -v "${PWD}:/tf:ro" bridgecrew/checkov -d /tf --framework terraform
 ```
+
+`checkov` marca 7 reglas como omitidas a propósito; cada una tiene su razón en un comentario `#checkov:skip` dentro de `main.tf` (por ejemplo, el SPECS pide Single-AZ y sin enhanced monitoring).
 
 | Prueba | Qué revisa |
 |---|---|
