@@ -243,8 +243,8 @@ El Learner Lab entrega **credenciales temporales** y no permite crear roles ni u
 | Área | Responsable | Carpetas |
 |---|---|---|
 | 🌐 Networking · 🛡 Security · 🔄 CI/CD | Santiago | `terraform/networking/` · `terraform/security/` · `terraform/bootstrap/` · `.github/` |
-| 🖥 Compute | _por asignar_ | `terraform/compute/` |
-| 🗄 Database | _por asignar_ | `terraform/database/` |
+| 🖥 Compute | Erick | `terraform/compute/` |
+| 🗄 Database | Omar | `terraform/database/` |
 | 🤝 Compartido | Los tres | `terraform/*.tf` · `terraform/*.tfvars` · `docs/` |
 
 `CODEOWNERS` asigna automáticamente al revisor según la carpeta que se modifica. Los archivos compartidos requieren la revisión de al menos otra persona.
