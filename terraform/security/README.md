@@ -6,7 +6,7 @@
 
 ![Responsable](https://img.shields.io/badge/responsable-Santiago-E11D48)
 ![Capa](https://img.shields.io/badge/capa-seguridad-E11D48)
-![Estado](https://img.shields.io/badge/estado-por%20implementar-yellow)
+![Estado](https://img.shields.io/badge/estado-implementado-16A34A)
 
 [⬅ Volver al README principal](../../README.md)
 
@@ -69,16 +69,20 @@ flowchart LR
 | 🟪 `db-sg` | 3306 | TCP | `app-sg` | Solo la aplicación habla con la base |
 | 🟪 `db-sg` | 3306 | TCP | `poc-sg` | ⏳ **Temporal**, solo durante la migración de datos |
 | 🟧 `endpoint-sg` | 443 | TCP | `app-sg` | Llamadas a Secrets Manager por la red privada |
-| ⬜ `poc-sg` | 80 | TCP | `0.0.0.0/0` | Prueba de la Fase 2 por IP pública |
+| ⬜ `poc-sg` | puerto de la app¹ | TCP | `0.0.0.0/0` | Prueba de la Fase 2 por IP pública |
+| ⬜ `poc-sg` | 22 | TCP | `poc_ssh_cidrs` (opcional, nunca `0.0.0.0/0`) | SSH con `vockey` para el `mysqldump` de la migración |
 
-<sub>¹ Confirmar en el código del App Server; en el laboratorio suele ser `80`.</sub>
+<sub>¹ `app_port` (por defecto `80`). Debe ser **el mismo valor** que recibe `compute`: lo usan el Target Group, el `user_data` y estas reglas.</sub>
 
 ### Salida (egress)
 
 | Security Group | Destino | Por qué |
 |---|---|---|
 | 🟦 `alb-sg` | `app-sg` en el puerto de la app | Reenviar peticiones y hacer *health checks* |
-| 🟩 `app-sg` | `0.0.0.0/0` | Paquetes del sistema y de Node durante el `user_data` (sale por el NAT) |
+| 🟩 `app-sg` | `0.0.0.0/0` en 80 y 443 | `apt` (80), npm, zip del código y Secrets Manager (443) durante el `user_data`, por el NAT. Con endpoint, el 443 llega a `endpoint-sg` por esta misma regla |
+| 🟩 `app-sg` | `db-sg` en 3306 | Consultas a RDS |
+| ⬜ `poc-sg` | `0.0.0.0/0` en 80 y 443 | Instalar Node.js, MySQL y el código (sale directo por el IGW) |
+| ⬜ `poc-sg` | `db-sg` en 3306 | ⏳ **Temporal**, carga del dump en RDS |
 | 🟪 `db-sg` | — | La base no inicia conexiones |
 | 🟧 `endpoint-sg` | — | Solo responde |
 
@@ -114,8 +118,8 @@ sequenceDiagram
 | Recurso | Cantidad | Detalle |
 |---|:--:|---|
 | `aws_security_group` | 5 | `alb-sg`, `app-sg`, `db-sg`, `endpoint-sg`, `poc-sg` |
-| `aws_vpc_security_group_ingress_rule` | ~6 | Una regla por fila de la matriz |
-| `aws_vpc_security_group_egress_rule` | ~2 | Solo donde hace falta salida |
+| `aws_vpc_security_group_ingress_rule` | 5 – 7+ | Una regla por fila de la matriz (las de la POC solo con `enable_poc`) |
+| `aws_vpc_security_group_egress_rule` | 4 – 7 | Solo donde hace falta salida |
 | `data.aws_iam_instance_profile` | 1 | `LabInstanceProfile` (solo lectura) |
 | `data.aws_iam_role` | 1 | `LabRole` (solo lectura) |
 
@@ -133,7 +137,11 @@ sequenceDiagram
 | `environment` | `string` | `dev` o `prod` |
 | `vpc_id` | `string` | VPC donde se crean los SGs (viene de `networking`) |
 | `app_port` | `number` | Puerto en el que escucha el App Server |
-| `enable_poc` | `bool` | Crea o no `poc-sg` y la regla temporal hacia `db-sg` |
+| `db_port` | `number` | Puerto de MySQL (por defecto `3306`) |
+| `enable_poc` | `bool` | Crea o no `poc-sg` y la regla temporal hacia `db-sg`. **Mismo valor** que en `compute` |
+| `poc_ssh_cidrs` | `list(string)` | CIDRs con SSH a la POC (por defecto `[]`, sin SSH) |
+| `instance_profile_name` | `string` | Por defecto `LabInstanceProfile` |
+| `lab_role_name` | `string` | Por defecto `LabRole`; el plan falla si el perfil trae otro rol |
 
 ### Salidas (`outputs.tf`)
 
@@ -145,6 +153,10 @@ sequenceDiagram
 | `endpoint_sg_id` | networking (VPC Endpoint) |
 | `poc_sg_id` | compute (EC2 POC) |
 | `instance_profile_name` | compute (Launch Template, POC) |
+| `instance_profile_arn` · `lab_role_arn` | Diagnóstico |
+
+> [!NOTE]
+> `poc_sg_id` vale `null` con `enable_poc = false`; `compute` tiene una *precondition* que exige el SG cuando su `enable_poc = true`, así que ambos módulos deben recibir el mismo valor desde la raíz.
 
 ---
 

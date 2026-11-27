@@ -6,7 +6,7 @@
 
 ![Responsable](https://img.shields.io/badge/responsable-Santiago-0EA5E9)
 ![Capa](https://img.shields.io/badge/capa-red-0EA5E9)
-![Estado](https://img.shields.io/badge/estado-por%20implementar-yellow)
+![Estado](https://img.shields.io/badge/estado-implementado-16A34A)
 
 [⬅ Volver al README principal](../../README.md)
 
@@ -81,7 +81,9 @@ flowchart TB
 | `aws_eip` | 1 | IP fija del NAT Gateway |
 | `aws_nat_gateway` | 1 | En `public 1`. **Uno solo** para ahorrar costo |
 | `aws_route_table` | 3 | Pública, app y datos |
+| `aws_route` | 2 | `0.0.0.0/0` → IGW (pública) y → NAT (app) |
 | `aws_route_table_association` | 9 | Cada subnet con su tabla |
+| `aws_default_security_group` | 1 | El SG por defecto de la VPC queda **sin reglas** (nada lo usa) |
 | `aws_vpc_endpoint` | 0 – 1 | Interface Endpoint de Secrets Manager, condicionado a `enable_secrets_endpoint` |
 
 ### Plan de direccionamiento
@@ -124,7 +126,7 @@ flowchart TB
 | `app_subnet_cidrs` | `list(string)` | CIDRs de private 1–3 |
 | `data_subnet_cidrs` | `list(string)` | CIDRs de private 4–6 |
 | `enable_secrets_endpoint` | `bool` | Crea o no el VPC Endpoint de Secrets Manager |
-| `endpoint_sg_id` | `string` | SG del endpoint (viene de `security`) |
+| `endpoint_sg_id` | `string` | SG del endpoint (viene de `security`). Obligatorio con `enable_secrets_endpoint = true` |
 
 ### Salidas (`outputs.tf`)
 
@@ -135,7 +137,12 @@ flowchart TB
 | `public_subnet_ids` | compute (ALB, POC) |
 | `app_subnet_ids` | compute (ASG) |
 | `data_subnet_ids` | database (DB Subnet Group) |
-| `nat_gateway_id` | outputs raíz / diagnóstico |
+| `nat_gateway_id` · `nat_public_ip` | outputs raíz / diagnóstico |
+| `azs` | Referencia del orden de las listas |
+| `secrets_endpoint_id` | Diagnóstico (`null` sin endpoint) |
+
+> [!IMPORTANT]
+> Las tres listas de subnets salen **en el orden de `azs`**: el índice `0` es `us-east-1a`. `compute` coloca la POC en `public_subnet_ids[0]`, la misma AZ que el NAT.
 
 ---
 
